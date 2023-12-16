@@ -25,7 +25,7 @@ class Bateo(models.Model):
         chained_model_field="liga_id",
         verbose_name="Campeonato",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -34,7 +34,7 @@ class Bateo(models.Model):
         chained_model_field="campeonato",
         verbose_name="Categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     grupo = ChainedForeignKey(
         "Grupo",
@@ -43,7 +43,7 @@ class Bateo(models.Model):
         chained_field="categoria",
         chained_model_field="categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     juego = ChainedForeignKey(
         "Juego",
@@ -52,7 +52,7 @@ class Bateo(models.Model):
         chained_field="grupo",
         chained_model_field="grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo = ChainedForeignKey(
         "Equipo",
@@ -61,7 +61,7 @@ class Bateo(models.Model):
         chained_field="categoria",
         chained_model_field="categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     jugador_id = ChainedForeignKey(
         "Jugador",
@@ -70,9 +70,8 @@ class Bateo(models.Model):
         chained_field="equipo",
         chained_model_field="equipo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
-    
     veces_bate = models.IntegerField(verbose_name="Veces al Bate", default=0)
     hits = models.IntegerField(verbose_name="Hits", default=0)
     doble = models.IntegerField(verbose_name="Dobles", default=0)
@@ -125,9 +124,8 @@ class Categoria(models.Model):
         verbose_name="Campeonato",
         chained_model_field="liga_id",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
-    # campeonato = GroupedForeignKey(Campeonato, "liga_id")
     nombre = models.CharField(max_length=50)
     
     def __str__(self):
@@ -141,8 +139,7 @@ class Categoria(models.Model):
         
 class Liga(models.Model):
     nombre = models.CharField(max_length=200)
-    titulo_uno = models.CharField(max_length=200, verbose_name="Título 1")
-    titulo_dos = models.CharField(max_length=200, verbose_name="Título 2")
+    titulo_uno = models.CharField(max_length=200, verbose_name="Título del Torneo")
     periodo = models.CharField(max_length=200, verbose_name="Período")
     logo = models.ImageField()
     anno = models.IntegerField(verbose_name="Año")
@@ -166,7 +163,7 @@ class Grupo(models.Model):
         chained_model_field="liga_id",
         verbose_name="Campeonato",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -175,7 +172,7 @@ class Grupo(models.Model):
         chained_model_field="campeonato",
         verbose_name="Categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     nombre = models.CharField(max_length=50)
     
@@ -197,7 +194,7 @@ class Equipo(models.Model):
         chained_model_field="liga_id",
         show_all=False,
         verbose_name="Campeonato",
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -206,7 +203,7 @@ class Equipo(models.Model):
         chained_model_field="campeonato",
         verbose_name="Categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     grupo = ChainedForeignKey(
         "Grupo",
@@ -215,7 +212,7 @@ class Equipo(models.Model):
         chained_model_field="categoria",
         verbose_name="Grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo = models.CharField(max_length=200)
     
@@ -238,7 +235,7 @@ class Juego(models.Model):
         chained_model_field="liga_id",
         show_all=False,
         verbose_name="Campeonato",
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -247,7 +244,7 @@ class Juego(models.Model):
         chained_model_field="campeonato",
         show_all=False,
         verbose_name="Categoria",
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     grupo = ChainedForeignKey(
         "Grupo",
@@ -256,7 +253,7 @@ class Juego(models.Model):
         chained_field="categoria",
         chained_model_field="categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo_uno = ChainedForeignKey(
         "Equipo",
@@ -265,7 +262,7 @@ class Juego(models.Model):
         chained_field="grupo",
         chained_model_field="grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)   
     grupob = ChainedForeignKey(
         "Grupo",
@@ -274,7 +271,7 @@ class Juego(models.Model):
         chained_field="categoria",
         chained_model_field="categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo_dos = ChainedForeignKey(
         "Equipo",
@@ -283,7 +280,7 @@ class Juego(models.Model):
         chained_field="grupob",
         chained_model_field="grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     carrera_uno = models.IntegerField(verbose_name="Carreras Equipo A", default=0)
     carrera_dos = models.IntegerField(verbose_name="Carreras Equipo B", default=0)
@@ -323,7 +320,7 @@ class Jugador(models.Model):
         verbose_name="Campeonato",
         chained_model_field="liga_id",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -332,7 +329,7 @@ class Jugador(models.Model):
         chained_model_field="campeonato",
         verbose_name="Categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     grupo = ChainedForeignKey(
         "Grupo",
@@ -341,7 +338,7 @@ class Jugador(models.Model):
         chained_model_field="categoria",
         verbose_name="Grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo = ChainedForeignKey(
         "Equipo",
@@ -350,7 +347,7 @@ class Jugador(models.Model):
         chained_model_field="grupo",
         verbose_name="Equipo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     tipo = models.CharField(max_length=100, choices=TIPO)
     nombre = models.CharField(max_length=100)
@@ -373,7 +370,7 @@ class Pitcheo(models.Model):
         chained_field="liga_id",
         chained_model_field="liga_id",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -382,7 +379,7 @@ class Pitcheo(models.Model):
         chained_model_field="campeonato",
         verbose_name="Categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     grupo = ChainedForeignKey(
         "Grupo",
@@ -391,7 +388,7 @@ class Pitcheo(models.Model):
         chained_field="categoria",
         chained_model_field="categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     juego = ChainedForeignKey(
         "Juego",
@@ -400,7 +397,7 @@ class Pitcheo(models.Model):
         chained_field="grupo",
         chained_model_field="grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo = ChainedForeignKey(
         "Equipo",
@@ -409,7 +406,7 @@ class Pitcheo(models.Model):
         chained_field="categoria",
         chained_model_field="categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     jugador_id = ChainedForeignKey(
         "Jugador",
@@ -418,7 +415,7 @@ class Pitcheo(models.Model):
         chained_field="equipo",
         chained_model_field="equipo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     ganado = models.BooleanField(verbose_name="Juego Ganado")
     perdido = models.BooleanField(verbose_name="Juego Perdido")
@@ -463,7 +460,7 @@ class ResumenEquipo(models.Model):
         chained_model_field="liga_id",
         verbose_name="Campeonato",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     categoria = ChainedForeignKey(
         "Categoria",
@@ -472,7 +469,7 @@ class ResumenEquipo(models.Model):
         chained_model_field="campeonato",
         verbose_name="Categoria",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     grupo = ChainedForeignKey(
         "Grupo",
@@ -481,7 +478,7 @@ class ResumenEquipo(models.Model):
         chained_model_field="categoria",
         verbose_name="Grupo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     equipo = ChainedForeignKey(
         "Equipo",
@@ -490,7 +487,7 @@ class ResumenEquipo(models.Model):
         chained_model_field="grupo",
         verbose_name="Equipo",
         show_all=False,
-        auto_choose=False,
+        auto_choose=True,
         sort=True)
     jugados = models.IntegerField(verbose_name="Juegos Jugados", default=0)
     ganados = models.IntegerField(verbose_name="Juegos Ganados", default=0)
