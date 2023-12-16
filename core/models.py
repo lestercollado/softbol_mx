@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from smart_selects.db_fields import ChainedForeignKey, GroupedForeignKey
 
-class Temporada(models.Model):
+class Campeonato(models.Model):
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
     nombre = models.CharField(max_length=50) 
     
     def __str__(self):
@@ -12,24 +13,78 @@ class Temporada(models.Model):
     class Meta:
         db_table = ''
         managed = True
-        verbose_name = 'Temporada'
-        verbose_name_plural = 'Temporadas'
+        verbose_name = 'Campeonato'
+        verbose_name_plural = 'Campeonato'
         
 class Bateo(models.Model):
-    juego_id = models.ForeignKey('Juego', models.DO_NOTHING, db_column='juego_id', verbose_name="Juego")
-    jugador_id = models.ForeignKey('Jugador', models.DO_NOTHING, db_column='jugador_id', verbose_name="Bateador")
-    veces_bate = models.IntegerField(verbose_name="Veces al Bate")
-    hits = models.IntegerField(verbose_name="Hits")
-    doble = models.IntegerField(verbose_name="Dobles")
-    triple = models.IntegerField(verbose_name="Triples")
-    home_run = models.IntegerField(verbose_name="Home Run")
-    carrera = models.IntegerField(verbose_name="Carreras")
-    base_robada = models.IntegerField(verbose_name="Bases robadas")
-    base_bola = models.IntegerField(verbose_name="Bases por bolas")
-    ponche = models.IntegerField(verbose_name="Ponches")
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "camb_id",
+        chained_field="liga_id",
+        chained_model_field="liga_id",
+        verbose_name="Campeonato",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "catb_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        verbose_name="Categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    grupo = ChainedForeignKey(
+        "Grupo",
+        related_name = "gpbat_id",
+        verbose_name="Grupo",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    juego = ChainedForeignKey(
+        "Juego",
+        related_name = "jue_id",
+        verbose_name="Juego",
+        chained_field="grupo",
+        chained_model_field="grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    equipo = ChainedForeignKey(
+        "Equipo",
+        related_name = "equip_id",
+        verbose_name="Equipo",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    jugador_id = ChainedForeignKey(
+        "Jugador",
+        related_name = "jugador_id",
+        verbose_name="Jugador",
+        chained_field="equipo",
+        chained_model_field="equipo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    
+    veces_bate = models.IntegerField(verbose_name="Veces al Bate", default=0)
+    hits = models.IntegerField(verbose_name="Hits", default=0)
+    doble = models.IntegerField(verbose_name="Dobles", default=0)
+    triple = models.IntegerField(verbose_name="Triples", default=0)
+    home_run = models.IntegerField(verbose_name="Home Run", default=0)
+    carrera = models.IntegerField(verbose_name="Carreras", default=0)
+    base_robada = models.IntegerField(verbose_name="Bases robadas", default=0)
+    base_bola = models.IntegerField(verbose_name="Bases por bolas", default=0)
+    ponche = models.IntegerField(verbose_name="Ponches", default=0)
     
     def __str__(self):
-        return self.jugador_id.nombre + " en el " + str(self.juego_id)
+        return self.jugador_id.nombre + " en el " + str(self.juego) + " de " + self.liga_id.nombre
 
     def clean(self, *args, **kwargs):
         veces_bate = self.veces_bate
@@ -60,20 +115,19 @@ class Bateo(models.Model):
         managed = True
         verbose_name = 'Bateo'
         verbose_name_plural = 'Bateos'
-        
-class Campo(models.Model):
-    nombre = models.CharField(max_length=200)
-    
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        db_table = ''
-        managed = True
-        verbose_name = 'Campo'
-        verbose_name_plural = 'Campos'
-        
+                
 class Categoria(models.Model):
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "campeonato_id",
+        chained_field="liga_id", 
+        verbose_name="Campeonato",
+        chained_model_field="liga_id",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    # campeonato = GroupedForeignKey(Campeonato, "liga_id")
     nombre = models.CharField(max_length=50)
     
     def __str__(self):
@@ -85,17 +139,14 @@ class Categoria(models.Model):
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
         
-
 class Liga(models.Model):
-    temporada_id = models.ForeignKey('Temporada', models.DO_NOTHING, db_column='temporada_id', verbose_name="Temporada")
-    categoria_id = models.ForeignKey('Categoria', models.DO_NOTHING, db_column='categoria_id', verbose_name="Categoría")
     nombre = models.CharField(max_length=200)
-    titulo_uno = models.CharField(max_length=200)
-    titulo_dos = models.CharField(max_length=200)
+    titulo_uno = models.CharField(max_length=200, verbose_name="Título 1")
+    titulo_dos = models.CharField(max_length=200, verbose_name="Título 2")
     periodo = models.CharField(max_length=200, verbose_name="Período")
     logo = models.ImageField()
     anno = models.IntegerField(verbose_name="Año")
-    responsable = models.CharField(max_length=100)    
+    responsable = models.CharField(max_length=100, verbose_name="Responsable")    
     
     def __str__(self):
         return self.nombre
@@ -107,7 +158,25 @@ class Liga(models.Model):
         verbose_name_plural = 'Ligas'
         
 class Grupo(models.Model):
-    liga = models.ForeignKey(Liga, models.DO_NOTHING)
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "campeonat_id",
+        chained_field="liga_id",
+        chained_model_field="liga_id",
+        verbose_name="Campeonato",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "categoria_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        verbose_name="Categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
     nombre = models.CharField(max_length=50)
     
     def __str__(self):
@@ -119,18 +188,35 @@ class Grupo(models.Model):
         verbose_name = 'Grupo'
         verbose_name_plural = 'Grupos'
 
-
 class Equipo(models.Model):
-    # liga = models.ForeignKey(Liga, models.DO_NOTHING)
-    # grupo_id = models.ForeignKey('Grupo', models.DO_NOTHING, db_column='grupo_id', verbose_name="Grupo")
-    grupo = ChainedForeignKey(
-        Grupo,
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "campeon_id",
         chained_field="liga_id",
         chained_model_field="liga_id",
         show_all=False,
-        auto_choose=True,
+        verbose_name="Campeonato",
+        auto_choose=False,
         sort=True)
-    grupo = GroupedForeignKey(Grupo, "liga")
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "categor_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        verbose_name="Categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    grupo = ChainedForeignKey(
+        "Grupo",
+        related_name = "grupo_id",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        verbose_name="Grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
     equipo = models.CharField(max_length=200)
     
     def __str__(self):
@@ -142,17 +228,70 @@ class Equipo(models.Model):
         verbose_name = 'Equipo'
         verbose_name_plural = 'Equipos'
         
-class Juego(models.Model): 
-    campo_id = models.ForeignKey('Campo', models.DO_NOTHING, db_column='campo_id', verbose_name="Lugar") 
-    fecha_hora = models.DateTimeField()
-    equipo_uno = models.ForeignKey('Equipo', models.DO_NOTHING, db_column='equipo_uno', verbose_name="Equipo A")    
-    equipo_dos = models.ForeignKey('Equipo', models.DO_NOTHING, db_column='equipo_dos',related_name="equipo_perdedor", verbose_name="Equipo B")  
-    carrera_uno = models.IntegerField(verbose_name="Carreras Equipo A")
-    carrera_dos = models.IntegerField(verbose_name="Carreras Equipo B")
-    error_uno = models.IntegerField(verbose_name="Errores Equipo A")
-    error_dos = models.IntegerField(verbose_name="Errores Equipo B")
-    hits_uno = models.IntegerField(verbose_name="Hits Equipo A")
-    hits_dos = models.IntegerField(verbose_name="Hits Equipo B")
+class Juego(models.Model):
+    fecha_hora = models.DateTimeField()    
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "cam_id",
+        chained_field="liga_id",
+        chained_model_field="liga_id",
+        show_all=False,
+        verbose_name="Campeonato",
+        auto_choose=False,
+        sort=True)
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "cat_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        show_all=False,
+        verbose_name="Categoria",
+        auto_choose=False,
+        sort=True)
+    grupo = ChainedForeignKey(
+        "Grupo",
+        related_name = "gp_id",
+        verbose_name="Grupo Equipo A",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    equipo_uno = ChainedForeignKey(
+        "Equipo",
+        related_name = "equipo_uno_id",
+        verbose_name="Equipo A",
+        chained_field="grupo",
+        chained_model_field="grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)   
+    grupob = ChainedForeignKey(
+        "Grupo",
+        related_name = "gpb_id",
+        verbose_name="Grupo Equipo B",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    equipo_dos = ChainedForeignKey(
+        "Equipo",
+        related_name = "equipo_dos_id",
+        verbose_name="Equipo B",
+        chained_field="grupob",
+        chained_model_field="grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    carrera_uno = models.IntegerField(verbose_name="Carreras Equipo A", default=0)
+    carrera_dos = models.IntegerField(verbose_name="Carreras Equipo B", default=0)
+    error_uno = models.IntegerField(verbose_name="Errores Equipo A", default=0)
+    error_dos = models.IntegerField(verbose_name="Errores Equipo B", default=0)
+    hits_uno = models.IntegerField(verbose_name="Hits Equipo A", default=0)
+    hits_dos = models.IntegerField(verbose_name="Hits Equipo B", default=0)
+    finalizado = models.BooleanField(verbose_name="Terminado")
     
     def __str__(self):
         return self.equipo_uno.equipo + "-" + self.equipo_dos.equipo + "(" + self.fecha_hora.strftime("%d-%m-%Y") + ")"
@@ -162,7 +301,7 @@ class Juego(models.Model):
         dos = self.equipo_dos
         if uno == dos:
             raise ValidationError('No se puede realizar un juego entre los mismos equipos')
-        super().clean(*args, **kwargs)        
+        super().clean(*args, **kwargs)       
     
     class Meta:
         db_table = ''
@@ -176,12 +315,48 @@ class Jugador(models.Model):
         ("Bateador", "Bateador")
     ]
     
-    equipo_id = models.ForeignKey('Equipo', models.DO_NOTHING, db_column='equipo_id', verbose_name="Equipo")
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "camp_id",
+        chained_field="liga_id",
+        verbose_name="Campeonato",
+        chained_model_field="liga_id",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "categ_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        verbose_name="Categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    grupo = ChainedForeignKey(
+        "Grupo",
+        related_name = "grup_id",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        verbose_name="Grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    equipo = ChainedForeignKey(
+        "Equipo",
+        related_name = "equipo_id",
+        chained_field="grupo",
+        chained_model_field="grupo",
+        verbose_name="Equipo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
     tipo = models.CharField(max_length=100, choices=TIPO)
     nombre = models.CharField(max_length=100)
     
     def __str__(self):
-        return self.nombre + "(" + self.equipo_id.equipo + ")" + " - " + self.tipo
+        return self.nombre + "(" + self.equipo.equipo + ")" + " - " + self.tipo
 
     class Meta:
         db_table = ''
@@ -190,22 +365,75 @@ class Jugador(models.Model):
         verbose_name_plural = 'Jugadores'
                 
 class Pitcheo(models.Model):
-    juego_id = models.ForeignKey('Juego', models.DO_NOTHING, db_column='juego_id', verbose_name="Juego")
-    jugador_id = models.ForeignKey('Jugador', models.DO_NOTHING, db_column='jugador_id', verbose_name="Pitcher")
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "cambp_id",
+        verbose_name="Campeonato",
+        chained_field="liga_id",
+        chained_model_field="liga_id",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "catbp_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        verbose_name="Categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    grupo = ChainedForeignKey(
+        "Grupo",
+        related_name = "gpbatp_id",
+        verbose_name="Grupo",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    juego = ChainedForeignKey(
+        "Juego",
+        related_name = "juep_id",
+        verbose_name="Juego",
+        chained_field="grupo",
+        chained_model_field="grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    equipo = ChainedForeignKey(
+        "Equipo",
+        related_name = "equipp_id",
+        verbose_name="Equipo",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    jugador_id = ChainedForeignKey(
+        "Jugador",
+        related_name = "jugadorp_id",
+        verbose_name="Jugador",
+        chained_field="equipo",
+        chained_model_field="equipo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
     ganado = models.BooleanField(verbose_name="Juego Ganado")
     perdido = models.BooleanField(verbose_name="Juego Perdido")
     sin_decision = models.BooleanField(verbose_name="Juego Sin Decisión")
-    hits = models.IntegerField(verbose_name="Hits Permitidos")
-    ip = models.IntegerField(verbose_name="IP")
-    carreras = models.IntegerField(verbose_name="Carreras permitidas")
-    carr_limpias = models.IntegerField(verbose_name="Carreras limpias")
-    ponche = models.IntegerField(verbose_name="Ponches")
-    bb = models.IntegerField(verbose_name="Base por bolas")
-    pcl = models.FloatField(editable=False,null=True, blank=True)
-    pcte = models.FloatField(editable=False,null=True, blank=True)
+    hits = models.IntegerField(verbose_name="Hits Permitidos", default=0)
+    ip = models.IntegerField(verbose_name="IP", default=0)
+    carreras = models.IntegerField(verbose_name="Carreras permitidas", default=0)
+    carr_limpias = models.IntegerField(verbose_name="Carreras limpias", default=0)
+    ponche = models.IntegerField(verbose_name="Ponches", default=0)
+    bb = models.IntegerField(verbose_name="Base por bolas", default=0)
+    pcl = models.FloatField(editable=False,null=True, blank=True, default=0)
+    pcte = models.FloatField(editable=False,null=True, blank=True, default=0)
     
     def __str__(self):
-        return self.jugador_id.nombre + " en el " + str(self.juego_id)
+        return self.jugador_id.nombre + " en el " + str(self.juego) + " de " + self.liga_id.nombre
     
     def clean(self, *args, **kwargs):
         ganado = self.ganado
@@ -227,15 +455,51 @@ class Pitcheo(models.Model):
         verbose_name_plural = 'Pitcheos'
         
 class ResumenEquipo(models.Model): 
-    equipo = models.ForeignKey('Equipo', models.DO_NOTHING, db_column='equipo_uno', verbose_name="Equipo")
-    jugados = models.IntegerField(verbose_name="Juegos Jugados")
-    ganados = models.IntegerField(verbose_name="Juegos Ganados")
-    perdidos = models.IntegerField(verbose_name="Juegos Perdidos")
-    empatados = models.IntegerField(verbose_name="Juegos Empatados")
-    pct = models.IntegerField(verbose_name="PCT")
+    liga_id = models.ForeignKey('Liga', models.DO_NOTHING, db_column='liga_id', verbose_name="Liga")
+    campeonato = ChainedForeignKey(
+        "Campeonato",
+        related_name = "campc_id",
+        chained_field="liga_id",
+        chained_model_field="liga_id",
+        verbose_name="Campeonato",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    categoria = ChainedForeignKey(
+        "Categoria",
+        related_name = "categc_id",
+        chained_field="campeonato",
+        chained_model_field="campeonato",
+        verbose_name="Categoria",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    grupo = ChainedForeignKey(
+        "Grupo",
+        related_name = "grupc_id",
+        chained_field="categoria",
+        chained_model_field="categoria",
+        verbose_name="Grupo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    equipo = ChainedForeignKey(
+        "Equipo",
+        related_name = "equipoc_id",
+        chained_field="grupo",
+        chained_model_field="grupo",
+        verbose_name="Equipo",
+        show_all=False,
+        auto_choose=False,
+        sort=True)
+    jugados = models.IntegerField(verbose_name="Juegos Jugados", default=0)
+    ganados = models.IntegerField(verbose_name="Juegos Ganados", default=0)
+    perdidos = models.IntegerField(verbose_name="Juegos Perdidos", default=0)
+    empatados = models.IntegerField(verbose_name="Juegos Empatados", default=0)
+    pct = models.IntegerField(verbose_name="PCT", default=0)
     
     def __str__(self):
-        return self.equipo.equipo
+        return self.equipo.equipo + " - " + str(self.grupo) + " - " + self.liga_id.nombre
     
     class Meta:
         db_table = ''

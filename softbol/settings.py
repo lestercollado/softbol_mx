@@ -30,8 +30,10 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
-INSTALLED_APPS = [    
+INSTALLED_APPS = [ 
     'jazzmin',
+    'django_admin_listfilter_dropdown',
+    'more_admin_filters',
     'core',
     'smart_selects',
     'django.contrib.admin',
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'softbol.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -136,7 +138,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
-    "site_title": "",
+    "site_title": "Copa Softbol",
 
     # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
     "site_header": "Copa Softbol",
@@ -167,7 +169,7 @@ JAZZMIN_SETTINGS = {
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string 
-    "search_model": ["core.Jugador", "core.Equipo"],
+    # "search_model": ["core.Jugador", "core.Equipo"],
 
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": None,
@@ -217,7 +219,7 @@ JAZZMIN_SETTINGS = {
     "hide_models": [],
 
     # List of apps (and/or models) to base side menu ordering off of (does not need to contain all apps/models)
-    "order_with_respect_to": ["auth", "books", "books.author", "books.book"],
+    # "order_with_respect_to": ["auth", "books", "books.author", "books.book"],
 
     # Custom links to append to app groups, keyed on app name
     # "custom_links": {
@@ -244,18 +246,18 @@ JAZZMIN_SETTINGS = {
     # Related Modal #
     #################
     # Use modals instead of popups
-    "related_modal_active": False,
+    "related_modal_active": True,
 
     #############
     # UI Tweaks #
     #############
     # Relative paths to custom CSS/JS scripts (must be present in static files)
-    "custom_css": None,
-    "custom_js": None,
-    # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
-    "use_google_fonts_cdn": True,
-    # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": False,
+    # "custom_css": None,
+    # "custom_js": None,
+    # # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
+    # "use_google_fonts_cdn": True,
+    # # Whether to show the UI customizer on the sidebar
+    # "show_ui_builder": False,
 
     ###############
     # Change view #
@@ -266,10 +268,8 @@ JAZZMIN_SETTINGS = {
     # - vertical_tabs
     # - collapsible
     # - carousel
-    "changeform_format": "carousel",
-    # override change forms on a per modeladmin basis
-    "changeform_format_overrides": {"core.campo": "collapsible", "core.jugador": "collapsible"}
+    # "changeform_format": "carousel",
+    # # override change forms on a per modeladmin basis
+    # "changeform_format_overrides": {"core.campo": "collapsible", "core.jugador": "collapsible"}
     # Add a language dropdown into the admin
 }
-
-USE_DJANGO_JQUERY = True

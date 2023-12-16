@@ -20,11 +20,11 @@ def resumen_equipos(request):
     p.drawString(60, 810, "Resumen de Equipos")
     p.setFont("Helvetica", 10, leading=None)
     
-    p.drawString(60, 795, "Liga  "+Liga.objects.get(id=2).nombre)
-    p.drawString(300, 795, "Fundada en "+str(Liga.objects.get(id=2).anno))
+    p.drawString(60, 795, "Liga  "+Liga.objects.get(id=1).nombre)
+    p.drawString(300, 795, "Fundada en "+str(Liga.objects.get(id=1).anno))
     p.drawString(60, 785, "Estado actual de Campeonato - Fecha "+today.strftime('%d/%m/%Y'))
-    p.drawString(300, 785, "Categoría: "+Categoria.objects.get(id=2).nombre)
-    p.drawString(400, 785, Grupo.objects.get(id=2).nombre)
+    p.drawString(60, 775, Categoria.objects.get(id=1).nombre)
+    p.drawString(60, 765, Grupo.objects.get(id=1).nombre)
     
     p.setFillColor("red")
     p.drawString(60, 750, "Equipo")
@@ -48,7 +48,7 @@ def resumen_equipos(request):
     
     p.setFont("Helvetica", 13, leading=None)
     
-    p.drawString(200, 150, "COMPILADOR OFICIAL: "+Liga.objects.get(id=2).responsable)
+    p.drawString(200, 150, "COMPILADOR OFICIAL: "+Liga.objects.get(id=1).responsable)
     
     p.showPage()
     p.save()

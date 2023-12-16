@@ -1,0 +1,8 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script src="{% static "smart-selects/admin/js/chainedfk.js" %}"></script>
+    <script src="{% static "smart-selects/admin/js/bindfields.js" %}"></script>
+{% endblock %}
