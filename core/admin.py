@@ -5,40 +5,46 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from more_admin_filters import *
 from django.utils.html import format_html
+from reportlab.lib.pagesizes import A4
+from .models import Jugador, ResumenEquipo, Liga, Categoria, Grupo
 
 class PitcheoAdmin(admin.ModelAdmin):
     list_filter = ["liga_id", "campeonato", "categoria", "grupo", "juego", "equipo", "jugador_id"]
-    # list_display = (
-    #     "jugador_id", "juego"
-    # )
+    list_display = (
+        "__str__",
+        "ganado",
+        "perdido",
+        "sin_decision",
+        "hits",
+        "ip",
+        "carreras",
+        "carr_limpias",
+        "ponche",
+        "bb",
+        "pcl",
+        "pcte",
+    )
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['jugador_id'].queryset = Jugador.objects.filter(tipo='Pitcher')
         return super(PitcheoAdmin, self).render_change_form(request, context, *args, **kwargs)
      
 class BateoAdmin(admin.ModelAdmin):
     list_filter = ["liga_id", "campeonato", "categoria", "grupo", "juego", "equipo", "jugador_id"]
-    
-    def render_change_form(self, request, context, *args, **kwargs):
-        context['adminform'].form.fields['jugador_id'].queryset = Jugador.objects.filter(tipo='Bateador')
-        return super(BateoAdmin, self).render_change_form(request, context, *args, **kwargs)
-     
-    # def save_model(self, request, obj, form, change):
-    #     equipo_id = obj.equipo.id
-    #     juego_id = obj.juego.id
-    #     hits = obj.hits + obj.doble + obj.triple + obj.home_run
-        
-    #     juego = Juego.objects.get(id=juego_id)
-        
-    #     if juego.equipo_uno.id == equipo_id:
-    #         juego.carrera_uno += obj.carrera
-    #         juego.hits_uno += hits
-    #     else:
-    #         juego.carrera_dos += obj.carrera
-    #         juego.hits_dos += hits
-            
-    #     juego.save()        
-        
-    #     super().save_model(request, obj, form, change)
+    list_display = (
+        "__str__",
+        "veces_bate",
+        "hits",
+        "doble",
+        "triple",
+        "home_run",
+        "carrera",
+        "base_robada",
+        "base_bola",
+        "ponche",
+    )
+    # def render_change_form(self, request, context, *args, **kwargs):
+    #     context['adminform'].form.fields['jugador_id'].queryset = Jugador.objects.filter(tipo='Bateador')
+    #     return super(BateoAdmin, self).render_change_form(request, context, *args, **kwargs)
 
 class EquipoAdmin(admin.ModelAdmin):
     list_filter = ["liga_id", "campeonato", "categoria", "grupo"]
@@ -136,6 +142,15 @@ class CategoriaAdmin(admin.ModelAdmin):
     list_display = (
         "nombre", "campeonato", "liga_id"
     )
+    
+class ResumenAdmin(admin.ModelAdmin):
+    list_filter = ["liga_id", "campeonato", "categoria", "grupo", "equipo"]
+    list_display = (
+        "liga_id","campeonato", "categoria", "grupo", "equipo", "jugados", 
+        "ganados",
+        "perdidos",
+        "empatados"
+    )
 
 admin.site.register(Equipo, EquipoAdmin)
 admin.site.register(Juego, JuegoAdmin)
@@ -146,4 +161,4 @@ admin.site.register(Jugador,JugadorAdmin)
 admin.site.register(Pitcheo,PitcheoAdmin)
 admin.site.register(Bateo, BateoAdmin)
 admin.site.register(Categoria, CategoriaAdmin)
-admin.site.register(ResumenEquipo)
+admin.site.register(ResumenEquipo, ResumenAdmin)
