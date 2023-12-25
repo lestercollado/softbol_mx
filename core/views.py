@@ -3,7 +3,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from datetime import datetime
 from reportlab.lib.pagesizes import A4
-from .models import Jugador, ResumenEquipo, Liga, Categoria, Bateo, Campeonato
+from .models import Jugador, ResumenEquipo, Liga, Categoria, Bateo, Campeonato, Pitcheo
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import ReporteEstadoActualForm, BateoGeneralForm
@@ -232,7 +232,6 @@ def bateo_general(request):
         return render(request, 'core/index.html', {"form": form, "mensaje": mensaje})
     
 def bateo_dpto(request):
-    print(request.POST)
     liga = request.POST['liga']
     campeonato = request.POST['campeonato']
     categoria = request.POST['categoria']
@@ -425,6 +424,316 @@ def bateo_dpto(request):
                 p.drawString(110, positionY, Bateo.objects.get(id=x).jugador_id.nombre)
                 p.drawString(260, positionY, Bateo.objects.get(id=x).equipo.equipo)
                 p.drawString(430, positionY, str(aux_robadas[x]))
+                positionY -= 12
+        
+        p.setFont("Helvetica", 13, leading=None)        
+        p.drawString(200, 150, "COMPILADOR OFICIAL: "+Liga.objects.get(id=liga).responsable)        
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=filename+".pdf")
+    else:
+        mensaje = "No es posible generar el reporte. No se han registrados bateos según su selección."
+        form = ReporteEstadoActualForm()
+        return render(request, 'core/index.html', {"form": form, "mensaje": mensaje})
+    
+def pitcheo_ganados_perdidos(request):
+    liga = request.POST['liga']
+    campeonato = request.POST['campeonato']
+    categoria = request.POST['categoria']
+    
+    ganados = Pitcheo.objects.filter(categoria = categoria)
+    
+    pitchers = Jugador.objects.filter(tipo = "Pitcher", categoria = categoria)
+    
+    aux_ganados = {}
+    ganados_count = 0
+    perdido_count = 0
+    sindecision_count = 0
+    for pitcher in pitchers:
+        pitcheos = Pitcheo.objects.filter(jugador_id = pitcher)
+        for pit in pitcheos:
+            if pit.ganado:
+                ganados_count += 1
+            if pit.perdido:
+                perdido_count += 1
+            if pit.sin_decision:
+                sindecision_count += 1
+        aux_ganados[pit.id] = [ ganados_count, perdido_count, sindecision_count ]
+        ganados_count = 0
+        perdido_count = 0
+        sindecision_count = 0
+    
+    aux_ganados = {k:v for k,v in sorted(aux_ganados.items(), key=lambda item: item[1][0], reverse=True)}
+    
+    
+    if len(ganados) > 0:    
+        today = datetime.today()
+        filename = 'pitcheo_' + today.strftime('%Y-%m-%d')
+        
+        buffer = io.BytesIO()
+        
+        width,height=A4 #595 x 842 pixels
+        p = canvas.Canvas(buffer, pagesize=A4)
+               
+        stylesheet=getSampleStyleSheet()
+        normalStyle = ParagraphStyle('My Para style',
+            fontName='Helvetica',
+            backColor=None,
+            fontSize=17,
+            borderColor='#FFFF00',
+            borderWidth=0,
+            borderPadding=None,
+            leading=20,
+            alignment=0
+        )
+        normalStyle_sub = ParagraphStyle('My Para style',
+            fontName='Helvetica',
+            backColor=None,
+            fontSize=12,
+            borderColor='#FFFF00',
+            borderWidth=0,
+            borderPadding=None,
+            leading=20,
+            alignment=0
+        )
+        parrafo = Paragraph("Liga "+Liga.objects.get(id=liga).nombre, normalStyle)
+       
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-50)
+        
+        parrafo = Paragraph(Campeonato.objects.get(id=campeonato).nombre + " - " + Categoria.objects.get(id=categoria).nombre, normalStyle_sub)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-70)
+        
+        parrafo = Paragraph("Ganados y Perdidos", normalStyle)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-100)
+        
+        parrafo = Paragraph(today.strftime('%d/%m/%Y'), normalStyle)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-150,height-100)
+        
+        # Hits
+        p.setFont("Helvetica", 10, leading=None)
+        p.setFillColor("red")
+        p.drawString(110, height-130, "Nombre del jugador")
+        p.drawString(260, height-130, "Equipo")
+        p.drawString(400, height-130, "JJ")     
+        p.drawString(420, height-130, "JG")        
+        p.drawString(440, height-130, "JP")        
+        p.drawString(460, height-130, "JS")        
+        p.drawString(480, height-130, "PCT")        
+        p.setFillColor("black")
+        positionY = height-145  
+        for x in aux_ganados:
+            if aux_ganados[x][0] > 0:
+                jugados = aux_ganados[x][0]+aux_ganados[x][1]+aux_ganados[x][2]
+                p.drawString(110, positionY, Pitcheo.objects.get(id=x).jugador_id.nombre)
+                p.drawString(260, positionY, Pitcheo.objects.get(id=x).equipo.equipo)
+                p.drawString(400, positionY, str(jugados))
+                p.drawString(420, positionY, str(aux_ganados[x][0]))
+                p.drawString(440, positionY, str(aux_ganados[x][1]))
+                p.drawString(460, positionY, str(aux_ganados[x][2]))
+                p.drawString(480, positionY, str(round(jugados / (aux_ganados[x][0] + aux_ganados[x][1]),3)))
+                positionY -= 12
+        
+        p.setFont("Helvetica", 13, leading=None)        
+        p.drawString(200, 150, "COMPILADOR OFICIAL: "+Liga.objects.get(id=liga).responsable)        
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=filename+".pdf")
+    else:
+        mensaje = "No es posible generar el reporte. No se han registrados bateos según su selección."
+        form = ReporteEstadoActualForm()
+        return render(request, 'core/index.html', {"form": form, "mensaje": mensaje})
+    
+def pitcheo_carreras_limpias(request):
+    liga = request.POST['liga']
+    campeonato = request.POST['campeonato']
+    categoria = request.POST['categoria']
+    
+    ganados = Pitcheo.objects.filter(categoria = categoria)
+    
+    pitchers = Jugador.objects.filter(tipo = "Pitcher", categoria = categoria)
+    
+    aux_ganados = {}
+    ganados_count = 0
+    perdido_count = 0
+    sindecision_count = 0
+    for pitcher in pitchers:
+        pitcheos = Pitcheo.objects.filter(jugador_id = pitcher)
+        for pit in pitcheos:
+            ganados_count += pit.ip
+            perdido_count += pit.carreras
+            sindecision_count += pit.carr_limpias
+        aux_ganados[pit.id] = [ ganados_count, perdido_count, sindecision_count ]
+        ganados_count = 0
+        perdido_count = 0
+        sindecision_count = 0
+    
+    aux_ganados = {k:v for k,v in sorted(aux_ganados.items(), key=lambda item: item[1][0], reverse=True)}
+        
+    if len(ganados) > 0:    
+        today = datetime.today()
+        filename = 'pitcheo_' + today.strftime('%Y-%m-%d')
+        
+        buffer = io.BytesIO()
+        
+        width,height=A4 #595 x 842 pixels
+        p = canvas.Canvas(buffer, pagesize=A4)
+               
+        stylesheet=getSampleStyleSheet()
+        normalStyle = ParagraphStyle('My Para style',
+            fontName='Helvetica',
+            backColor=None,
+            fontSize=17,
+            borderColor='#FFFF00',
+            borderWidth=0,
+            borderPadding=None,
+            leading=20,
+            alignment=0
+        )
+        normalStyle_sub = ParagraphStyle('My Para style',
+            fontName='Helvetica',
+            backColor=None,
+            fontSize=12,
+            borderColor='#FFFF00',
+            borderWidth=0,
+            borderPadding=None,
+            leading=20,
+            alignment=0
+        )
+        parrafo = Paragraph("Liga "+Liga.objects.get(id=liga).nombre, normalStyle)
+       
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-50)
+        
+        parrafo = Paragraph(Campeonato.objects.get(id=campeonato).nombre + " - " + Categoria.objects.get(id=categoria).nombre, normalStyle_sub)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-70)
+        
+        parrafo = Paragraph("Carreras limpias con 12 IP", normalStyle)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-100)
+        
+        parrafo = Paragraph(today.strftime('%d/%m/%Y'), normalStyle)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-150,height-100)
+        
+        # Hits
+        p.setFont("Helvetica", 10, leading=None)
+        p.setFillColor("red")
+        p.drawString(110, height-130, "Nombre del jugador")
+        p.drawString(260, height-130, "Equipo")
+        p.drawString(400, height-130, "IP")     
+        p.drawString(420, height-130, "C")        
+        p.drawString(440, height-130, "CL")        
+        p.drawString(460, height-130, "PCL")       
+        p.setFillColor("black")
+        positionY = height-145  
+        for x in aux_ganados:
+            if aux_ganados[x][0] > 0:
+                p.drawString(110, positionY, Pitcheo.objects.get(id=x).jugador_id.nombre)
+                p.drawString(260, positionY, Pitcheo.objects.get(id=x).equipo.equipo)
+                p.drawString(400, positionY, str(aux_ganados[x][0]))
+                p.drawString(420, positionY, str(aux_ganados[x][1]))
+                p.drawString(440, positionY, str(aux_ganados[x][2]))
+                p.drawString(460, positionY, str(aux_ganados[x][2]*7/aux_ganados[x][0]))
+                positionY -= 12
+        
+        p.setFont("Helvetica", 13, leading=None)        
+        p.drawString(200, 150, "COMPILADOR OFICIAL: "+Liga.objects.get(id=liga).responsable)        
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=filename+".pdf")
+    else:
+        mensaje = "No es posible generar el reporte. No se han registrados bateos según su selección."
+        form = ReporteEstadoActualForm()
+        return render(request, 'core/index.html', {"form": form, "mensaje": mensaje})
+    
+def pitcheo_ponches(request):
+    liga = request.POST['liga']
+    campeonato = request.POST['campeonato']
+    categoria = request.POST['categoria']
+    
+    ganados = Pitcheo.objects.filter(categoria = categoria)
+    
+    pitchers = Jugador.objects.filter(tipo = "Pitcher", categoria = categoria)
+    
+    aux_ganados = {}
+    ganados_count = 0
+    for pitcher in pitchers:
+        pitcheos = Pitcheo.objects.filter(jugador_id = pitcher)
+        for pit in pitcheos:
+            ganados_count += pit.ponche
+        aux_ganados[pit.id] = ganados_count
+        ganados_count = 0
+        
+    aux_ganados = {k:v for k,v in sorted(aux_ganados.items(), key=lambda item: item[1], reverse=True)}
+        
+    if len(ganados) > 0:    
+        today = datetime.today()
+        filename = 'pitcheo_' + today.strftime('%Y-%m-%d')
+        
+        buffer = io.BytesIO()
+        
+        width,height=A4 #595 x 842 pixels
+        p = canvas.Canvas(buffer, pagesize=A4)
+               
+        stylesheet=getSampleStyleSheet()
+        normalStyle = ParagraphStyle('My Para style',
+            fontName='Helvetica',
+            backColor=None,
+            fontSize=17,
+            borderColor='#FFFF00',
+            borderWidth=0,
+            borderPadding=None,
+            leading=20,
+            alignment=0
+        )
+        normalStyle_sub = ParagraphStyle('My Para style',
+            fontName='Helvetica',
+            backColor=None,
+            fontSize=12,
+            borderColor='#FFFF00',
+            borderWidth=0,
+            borderPadding=None,
+            leading=20,
+            alignment=0
+        )
+        parrafo = Paragraph("Liga "+Liga.objects.get(id=liga).nombre, normalStyle)
+       
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-50)
+        
+        parrafo = Paragraph(Campeonato.objects.get(id=campeonato).nombre + " - " + Categoria.objects.get(id=categoria).nombre, normalStyle_sub)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-70)
+        
+        parrafo = Paragraph("Ponches", normalStyle)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-400,height-100)
+        
+        parrafo = Paragraph(today.strftime('%d/%m/%Y'), normalStyle)
+        parrafo.wrapOn(p,250,350)
+        parrafo.drawOn(p,width-150,height-100)
+        
+        # Hits
+        p.setFont("Helvetica", 10, leading=None)
+        p.setFillColor("red")
+        p.drawString(110, height-130, "Nombre del jugador")
+        p.drawString(260, height-130, "Equipo")
+        p.drawString(400, height-130, "Ponches")    
+        p.setFillColor("black")
+        positionY = height-145  
+        for x in aux_ganados:
+            if aux_ganados[x] > 0:
+                p.drawString(110, positionY, Pitcheo.objects.get(id=x).jugador_id.nombre)
+                p.drawString(260, positionY, Pitcheo.objects.get(id=x).equipo.equipo)
+                p.drawString(415, positionY, str(aux_ganados[x]))
                 positionY -= 12
         
         p.setFont("Helvetica", 13, leading=None)        

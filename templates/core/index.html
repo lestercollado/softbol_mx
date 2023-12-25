@@ -244,7 +244,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h5 class="m-0"><i class="fa fa-info"></i> Pitcheo - Ganados y Perdidos</h5>
                 </div>
                 <div class="card-body">
-                    {% comment %} <form action="/estado_actual" method="post">
+                    {% comment %} <form action="/pitcheo_ganados_perdidos" method="post">
                         {% csrf_token %}
                         {{ form.media.js }}
                         {{ form.media.css }}
@@ -258,7 +258,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h5 class="m-0"><i class="fa fa-info"></i> Pitcheo - Carreras Limpias</h5>
                 </div>
                 <div class="card-body">
-                    {% comment %} <form action="/estado_actual" method="post">
+                    {% comment %} <form action="/pitcheo_carreras_limpias" method="post">
                         {% csrf_token %}
                         {{ form.media.js }}
                         {{ form.media.css }}
@@ -272,13 +272,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h5 class="m-0"><i class="fa fa-info"></i> Pitcheo - Ponches</h5>
                 </div>
                 <div class="card-body">
-                    {% comment %} <form action="/estado_actual" method="post">
+                    <form action="/pitcheo_ponches" method="post">
                         {% csrf_token %}
                         {{ form.media.js }}
                         {{ form.media.css }}
                         {{ form.as_p}}
                         <input class="btn btn-primary" type="submit" value="Generar" />
-                    </form> {% endcomment %}
+                    </form>
                 </div>
             </div><!-- /.card -->
           </div>
@@ -303,13 +303,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <h5 class="m-0"><i class="fa fa-info"></i> Bateo Individual</h5>
               </div>
               <div class="card-body">
-                <form action="/bateo_dpto" method="post">
+                {% comment %} <form action="/bateo_dpto" method="post">
                     {% csrf_token %}
                     {{ form.media.js }}
                     {{ form.media.css }}
                     {{ form.as_p}}
                     <input class="btn btn-primary" type="submit" value="Generar" />
-                </form>
+                </form> {% endcomment %}
               </div>
             </div>
           </div>
