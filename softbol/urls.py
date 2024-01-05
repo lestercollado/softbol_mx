@@ -19,7 +19,7 @@ from django.urls import path, re_path
 from django.conf.urls import include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin_module'),
     path('', include('core.urls'), name='core_app'),
     re_path(r"^chaining/", include('smart_selects.urls'))
 ]

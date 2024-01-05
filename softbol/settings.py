@@ -192,6 +192,7 @@ JAZZMIN_SETTINGS = {
         # App with dropdown menu to all its models pages (Permissions checked against models)
         {"app": "core"},
         {"model": "auth.User"},
+        {"name": "Reportes",  "url": "/"},
     ],
 
     #############

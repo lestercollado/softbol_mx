@@ -17,6 +17,30 @@ def index(request):
     form_bateo = BateoGeneralForm()
     return render(request, 'core/index.html', {"form": form, "form_bateo": form_bateo})
 
+def bateo_general_view(request):
+    form_bateo = BateoGeneralForm()
+    return render(request, 'core/bateo_general.html', {"form_bateo": form_bateo})
+
+def estado_actual_view(request):
+    form_bateo = ReporteEstadoActualForm()
+    return render(request, 'core/estado_actual.html', {"form_bateo": form_bateo})
+
+def bateo_dpto_view(request):
+    form_bateo = ReporteEstadoActualForm()
+    return render(request, 'core/bateo_dpto.html', {"form_bateo": form_bateo})
+
+def pitcheo_ganados_view(request):
+    form_bateo = ReporteEstadoActualForm()
+    return render(request, 'core/pitcheo_ganados.html', {"form_bateo": form_bateo})
+
+def pitcheo_carreras_view(request):
+    form_bateo = ReporteEstadoActualForm()
+    return render(request, 'core/pitcheo_carreras.html', {"form_bateo": form_bateo})
+
+def pitcheo_ponches_view(request):
+    form_bateo = ReporteEstadoActualForm()
+    return render(request, 'core/pitcheo_ponches.html', {"form_bateo": form_bateo})
+
 def reporte_estado_actual(request):
     print(request.POST)
     liga = request.POST['liga']
@@ -198,24 +222,25 @@ def bateo_general(request):
         positionY = height-145
         
         for bateo in bateos:
-            p.drawString(10, positionY, bateo.jugador_id.nombre)
-            p.drawString(160, positionY, bateo.equipo.equipo)
-            p.drawString(300, positionY, str(bateo.veces_bate))
-            p.drawString(320, positionY, str(bateo.carrera))
-            p.drawString(340, positionY, str(bateo.hits))
-            p.drawString(360, positionY, str(bateo.doble))
-            p.drawString(385, positionY, str(bateo.triple))
-            p.drawString(410, positionY, str(bateo.home_run))
-            p.drawString(435, positionY, "-")
-            p.drawString(460, positionY, str(bateo.base_bola))
-            p.drawString(485, positionY, str(bateo.base_robada))
-            p.drawString(510, positionY, str(bateo.ponche))
-            if bateo.veces_bate != 0:
-                pct = round(bateo.hits / bateo.veces_bate,3)
-            else:
-                pct = 0
-            p.drawString(535, positionY, str(pct))
-            positionY -= 12
+            if bateo.veces_bate >= int(veces):
+                p.drawString(10, positionY, bateo.jugador_id.nombre)
+                p.drawString(160, positionY, bateo.equipo.equipo)
+                p.drawString(300, positionY, str(bateo.veces_bate))
+                p.drawString(320, positionY, str(bateo.carrera))
+                p.drawString(340, positionY, str(bateo.hits))
+                p.drawString(360, positionY, str(bateo.doble))
+                p.drawString(385, positionY, str(bateo.triple))
+                p.drawString(410, positionY, str(bateo.home_run))
+                p.drawString(435, positionY, "-")
+                p.drawString(460, positionY, str(bateo.base_bola))
+                p.drawString(485, positionY, str(bateo.base_robada))
+                p.drawString(510, positionY, str(bateo.ponche))
+                if bateo.veces_bate != 0:
+                    pct = round(bateo.hits / bateo.veces_bate,3)
+                else:
+                    pct = 0
+                p.drawString(535, positionY, str(pct))
+                positionY -= 12
         
         p.setFont("Helvetica", 13, leading=None)
         

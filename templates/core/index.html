@@ -8,7 +8,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Starter</title>
+  <title>Reportes | Copa Softbol</title>
 
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
@@ -24,122 +24,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Inicio</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Administración</a>
+        <a href="/admin" class="nav-link">Administración</a>
       </li>
     </ul>
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Navbar Search -->
-      {% comment %} <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
-        </a>
-        <div class="navbar-search-block">
-          <form class="form-inline">
-            <div class="input-group input-group-sm">
-              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-              <div class="input-group-append">
-                <button class="btn btn-navbar" type="submit">
-                  <i class="fas fa-search"></i>
-                </button>
-                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </li> {% endcomment %}
-
-      <!-- Messages Dropdown Menu -->
-      {% comment %} <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{% static 'dist/img/user1-128x128.jpg' %}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{% static 'dist/img/user8-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{% static 'dist/img/user3-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-        </div>
-      </li> {% endcomment %}
-      <!-- Notifications Dropdown Menu -->
-      {% comment %} <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-header">15 Notifications</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-        </div>
-      </li>{% endcomment %}
+      
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -157,7 +48,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="{% url 'reporte_bg' %}" class="brand-link">
       <img src="{% static 'logo_liga.png' %}" alt="Logo Liga" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">Copa Softbol</span>
     </a>
@@ -181,8 +72,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
-                Simple Link
-                <span class="right badge badge-danger">New</span>
+                Reporte Bateo General
               </p>
             </a>
           </li>
@@ -207,13 +97,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         {% endif %}
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Reportes</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Inicio</a></li>
-              <li class="breadcrumb-item active">Reportes</li>
-            </ol>
+            <h1 class="m-0">Reporte</h1>
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -224,64 +108,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-6">
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                  <h5 class="m-0"><i class="fa fa-info"></i> Estado Actual del Campeonato</h5>
-                </div>
-                <div class="card-body">
-                    {% comment %} <form action="/estado_actual" method="post">
-                        {% csrf_token %}
-                        {{ form.media.js }}
-                        {{ form.media.css }}
-                        {{ form.as_p}}
-                        <input class="btn btn-primary" type="submit" value="Generar" />
-                    </form> {% endcomment %}
-                </div>
-            </div>
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                  <h5 class="m-0"><i class="fa fa-info"></i> Pitcheo - Ganados y Perdidos</h5>
-                </div>
-                <div class="card-body">
-                    {% comment %} <form action="/pitcheo_ganados_perdidos" method="post">
-                        {% csrf_token %}
-                        {{ form.media.js }}
-                        {{ form.media.css }}
-                        {{ form.as_p}}
-                        <input class="btn btn-primary" type="submit" value="Generar" />
-                    </form> {% endcomment %}
-                </div>
-            </div><!-- /.card -->
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                  <h5 class="m-0"><i class="fa fa-info"></i> Pitcheo - Carreras Limpias</h5>
-                </div>
-                <div class="card-body">
-                    {% comment %} <form action="/pitcheo_carreras_limpias" method="post">
-                        {% csrf_token %}
-                        {{ form.media.js }}
-                        {{ form.media.css }}
-                        {{ form.as_p}}
-                        <input class="btn btn-primary" type="submit" value="Generar" />
-                    </form> {% endcomment %}
-                </div>
-            </div><!-- /.card -->
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                  <h5 class="m-0"><i class="fa fa-info"></i> Pitcheo - Ponches</h5>
-                </div>
-                <div class="card-body">
-                    <form action="/pitcheo_ponches" method="post">
-                        {% csrf_token %}
-                        {{ form.media.js }}
-                        {{ form.media.css }}
-                        {{ form.as_p}}
-                        <input class="btn btn-primary" type="submit" value="Generar" />
-                    </form>
-                </div>
-            </div><!-- /.card -->
-          </div>
           <!-- /.col-md-6 -->
           <div class="col-lg-6">
             <div class="card card-primary card-outline">
@@ -289,27 +115,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <h5 class="m-0"><i class="fa fa-info"></i> Bateo General</h5>
               </div>
               <div class="card-body">
-                {% comment %} <form action="/bateo_general" method="post">
+                <form action="/bateo_general" method="post">
                     {% csrf_token %}
                     {{ form_bateo.media.js }}
                     {{ form_bateo.media.css }}
                     {{ form_bateo.as_p}}
                     <input class="btn btn-primary" type="submit" value="Generar" />
-                </form> {% endcomment %}
-              </div>
-            </div>
-            <div class="card card-primary card-outline">
-              <div class="card-header">
-                <h5 class="m-0"><i class="fa fa-info"></i> Bateo Individual</h5>
-              </div>
-              <div class="card-body">
-                {% comment %} <form action="/bateo_dpto" method="post">
-                    {% csrf_token %}
-                    {{ form.media.js }}
-                    {{ form.media.css }}
-                    {{ form.as_p}}
-                    <input class="btn btn-primary" type="submit" value="Generar" />
-                </form> {% endcomment %}
+                </form>
               </div>
             </div>
           </div>
