@@ -3,3 +3,4 @@ django-jazzmin
 django-admin-list-filter-dropdown
 django-more-admin-filters
 django-smart-selects
+reportlab
