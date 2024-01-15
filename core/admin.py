@@ -21,6 +21,7 @@ class PitcheoAdmin(admin.ModelAdmin):
         "carr_limpias",
         "ponche",
         "bb",
+        "veces_legales",
         "pcl",
         "pcte",
     )

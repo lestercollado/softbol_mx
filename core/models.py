@@ -425,6 +425,7 @@ class Pitcheo(models.Model):
     carreras = models.IntegerField(verbose_name="Carreras permitidas", default=0)
     carr_limpias = models.IntegerField(verbose_name="Carreras limpias", default=0)
     ponche = models.IntegerField(verbose_name="Ponches", default=0)
+    veces_legales = models.IntegerField(verbose_name="Veces Legales", default=0)
     bb = models.IntegerField(verbose_name="Base por bolas", default=0)
     pcl = models.FloatField(editable=False,null=True, blank=True, default=0)
     pcte = models.FloatField(editable=False,null=True, blank=True, default=0)
