@@ -77,10 +77,12 @@ class Bateo(models.Model):
     doble = models.IntegerField(verbose_name="Dobles", default=0)
     triple = models.IntegerField(verbose_name="Triples", default=0)
     home_run = models.IntegerField(verbose_name="Home Run", default=0)
-    carrera = models.IntegerField(verbose_name="Carreras producidas", default=0)
+    carrera = models.IntegerField(verbose_name="Carreras", default=0)
+    carrera_producida = models.IntegerField(verbose_name="Carreras producidas", default=0)
     base_robada = models.IntegerField(verbose_name="Bases robadas", default=0)
     base_bola = models.IntegerField(verbose_name="Bases por bolas", default=0)
     ponche = models.IntegerField(verbose_name="Ponches", default=0)
+    juegos_jugados = models.IntegerField(verbose_name="Juegos Jugados", default=0)
     
     def __str__(self):
         return self.jugador_id.nombre + " en el " + str(self.juego) + " de " + self.liga_id.nombre

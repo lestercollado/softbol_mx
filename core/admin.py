@@ -39,9 +39,11 @@ class BateoAdmin(admin.ModelAdmin):
         "triple",
         "home_run",
         "carrera",
+        "carrera_producida",
         "base_robada",
         "base_bola",
         "ponche",
+        "juegos_jugados",
     )
     # def render_change_form(self, request, context, *args, **kwargs):
     #     context['adminform'].form.fields['jugador_id'].queryset = Jugador.objects.filter(tipo='Bateador')
