@@ -18,7 +18,7 @@ class ReporteEstadoActualForm(forms.Form):
         queryset=Categoria.objects.all(),
         empty_label='Seleccionar...',
         label='Categoria',
-        to_app_name='core', to_model_name='Categoria', chained_field='campeonato', chained_model_field='liga_id',
+        to_app_name='core', to_model_name='Categoria', chained_field='campeonato', chained_model_field='campeonato',
         foreign_key_app_name='core', foreign_key_model_name='Categoria', foreign_key_field_name='categoria',
         show_all=False, auto_choose=True
     )
@@ -43,7 +43,7 @@ class BateoGeneralForm(forms.Form):
         queryset=Categoria.objects.all(),
         empty_label='Seleccionar...',
         label='Categoria',
-        to_app_name='core', to_model_name='Categoria', chained_field='campeonato', chained_model_field='liga_id',
+        to_app_name='core', to_model_name='Categoria', chained_field='campeonato', chained_model_field='campeonato',
         foreign_key_app_name='core', foreign_key_model_name='Categoria', foreign_key_field_name='categoria',
         show_all=False, auto_choose=True
     )

@@ -105,8 +105,8 @@ class Bateo(models.Model):
             raise ValidationError('No puede tener más Base por bolas que veces al bate')
         if veces_bate < ponche:
             raise ValidationError('No puede tener más Ponches que veces al bate')
-        if veces_bate < (hits+doble+triple+home_run+base_bola+ponche):
-            raise ValidationError('La suma de todas las conexiones, ponches y bases por bolas debe ser menor o igual a las veces al bate')
+        # if veces_bate < (hits+doble+triple+home_run+base_bola+ponche):
+        #     raise ValidationError('La suma de todas las conexiones, ponches y bases por bolas debe ser menor o igual a las veces al bate')
         super().clean(*args, **kwargs)    
     
     class Meta:
